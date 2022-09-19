@@ -66,7 +66,7 @@ exports.deleteThought = async (thoughtId, requestUserId) => {
     const deleted = await thoughtRepository.deleteThought(thoughtId);
 
     // Handle error
-    if (thought.err) {
+    if (deleted.err) {
       throw Error(thoughtAdded.err.toString());
     }
 
