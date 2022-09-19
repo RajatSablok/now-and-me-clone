@@ -21,6 +21,10 @@ exports.getJWT = async (data) => {
   return token;
 };
 
+exports.verifyJWT = (token) => {
+  return jwt.verify(token, config.JWT_SECRET);
+};
+
 exports.getHashedPassword = async (password) => {
   return bcrypt.hash(password, 10);
 };
