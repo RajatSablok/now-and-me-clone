@@ -6,8 +6,16 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const rateLimit = require("express-rate-limit");
 
-const app = express();
+// Load env variables
 dotenv.config();
+
+const { connectDB } = require("./utils");
+
+// Initialize express app
+const app = express();
+
+// Connect to MongoDB client using mongoose
+connectDB();
 
 // Set basic rate limiter
 app.set("trust proxy", 1);
@@ -22,15 +30,6 @@ app.use(limiter);
 // Use helmet to prevent common security vulnerabilities
 app.use(helmet());
 
-// Connect to MongoDB client using mongoose
-mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Database Connected"))
-  .catch((err) => console.log(err));
-
 // Use body-parser to parse json body
 app.use(bodyParser.urlencoded({ limit: "1mb", extended: false }));
 app.use(bodyParser.json("100mb"));
@@ -40,7 +39,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-legit-request"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
@@ -51,9 +50,9 @@ app.use((req, res, next) => {
 
 app.use(cors());
 
-// app.use("/api", require("./routes"));
+app.use("/api/v1", require("./routes"));
 
-//This function will give a 404 response if an undefined API endpoint is fired
+// This function will give a 404 response if an undefined API endpoint is fired
 app.use((req, res, next) => {
   const error = new Error("Not found");
   error.status = 404;
@@ -63,7 +62,6 @@ app.use((req, res, next) => {
 app.use(async (error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
-    success: false,
     message: error.message || error.toString() || "Something went wrong",
     data: error.data || null,
   });
@@ -75,5 +73,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
-
-module.exports = app;
