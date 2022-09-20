@@ -4,7 +4,7 @@ const router = express.Router({ mergeParams: true });
 const replyControllers = require("./replyControllers");
 const replyValidators = require("./replyValidators");
 const checkAuth = require("../../middlewares/checkAuth");
-const errorStrings = require("../../errors");
+const errorStrings = require("../../../utils/errors");
 
 router.post("/", checkAuth, async (req, res, next) => {
   try {

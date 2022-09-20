@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const Thought = require("./thoughtModel");
-const { DEFAULT_PAGE_LIMIT } = require("../../config");
+const { DEFAULT_PAGE_LIMIT } = require("../../../utils/config");
 
 exports.addThought = async (text, isAnonymous, userId) => {
   try {

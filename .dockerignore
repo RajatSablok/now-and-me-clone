@@ -6,6 +6,7 @@
 **/npm-debug.log
 **/coverage
 **/.env
+**/.env.example
 **/.editorconfig
 **/.aws
 **/dist

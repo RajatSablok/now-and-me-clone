@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const Reply = require("./replyModel");
-const { DEFAULT_PAGE_LIMIT } = require("../../config");
+const { DEFAULT_PAGE_LIMIT } = require("../../../utils/config");
 
 exports.addReply = async (text, isAnonymous, userId, thoughtId) => {
   try {

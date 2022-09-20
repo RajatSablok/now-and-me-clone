@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const User = require("./userModel");
-const errorStrings = require("../../errors");
+const errorStrings = require("../../../utils/errors");
 
 exports.findUserByUsername = async (username) => {
   try {

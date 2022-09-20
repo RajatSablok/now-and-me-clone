@@ -1,7 +1,11 @@
 const userRepository = require("./userRepository");
 
-const { getJWT, getHashedPassword, compareHash } = require("../../utils");
-const errorStrings = require("../../errors");
+const {
+  getJWT,
+  getHashedPassword,
+  compareHash,
+} = require("../../../utils/utils");
+const errorStrings = require("../../../utils/errors");
 
 exports.signup = async (userInfo) => {
   try {

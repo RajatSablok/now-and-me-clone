@@ -1,5 +1,5 @@
-const { verifyJWT } = require("../utils");
-const errorStrings = require("../errors");
+const { verifyJWT } = require("../../utils/utils");
+const errorStrings = require("../../utils/errors");
 
 module.exports = async (req, res, next) => {
   try {

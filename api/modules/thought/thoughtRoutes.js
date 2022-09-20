@@ -4,7 +4,7 @@ const router = express.Router();
 const thoughtControllers = require("./thoughtControllers");
 const thoughtValidators = require("./thoughtValidators");
 const checkAuth = require("../../middlewares/checkAuth");
-const errorStrings = require("../../errors");
+const errorStrings = require("../../../utils/errors");
 
 router.post("/", checkAuth, async (req, res, next) => {
   try {

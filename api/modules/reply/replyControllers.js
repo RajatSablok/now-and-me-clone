@@ -1,5 +1,5 @@
 const replyRepository = require("./replyRepository");
-const errorStrings = require("../../errors");
+const errorStrings = require("../../../utils/errors");
 
 exports.addReply = async (text, isAnonymous, userId, thoughtId) => {
   try {

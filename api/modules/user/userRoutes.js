@@ -3,7 +3,7 @@ const router = express.Router();
 
 const userControllers = require("./userControllers");
 const userValidators = require("./userValidatiors");
-const errorStrings = require("../../errors");
+const errorStrings = require("../../../utils/errors");
 
 router.post("/signup", async (req, res, next) => {
   try {

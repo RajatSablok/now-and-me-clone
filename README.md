@@ -36,6 +36,7 @@ $ docker-compose up -d --build
 ```
 
 - Follow the API docs with [this base URL](http://localhost:5000/api/v1) to make requests.
+- If running without docker, please copy variables from `.env.example` to `.env` file with appropriate values.
 
 ## Contributors
 

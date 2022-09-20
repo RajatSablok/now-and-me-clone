@@ -1,6 +1,6 @@
 const thoughtRepository = require("./thoughtRepository");
 const replyRepository = require("../reply/replyRepository");
-const errorStrings = require("../../errors");
+const errorStrings = require("../../../utils/errors");
 
 exports.addThought = async (text, isAnonymous, userId) => {
   try {

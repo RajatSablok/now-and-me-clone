@@ -8,9 +8,9 @@ const rateLimit = require("express-rate-limit");
 // Load env variables
 dotenv.config();
 
-const { connectDB } = require("./utils");
-const errorStrings = require("./errors");
-const { PORT } = require("./config");
+const { connectDB } = require("./utils/utils");
+const errorStrings = require("./utils/errors");
+const { PORT } = require("./utils/config");
 
 // Initialize express app
 const app = express();
@@ -57,7 +57,7 @@ app.use((req, res, next) => {
 app.use(cors());
 
 // Initialize routes
-app.use("/api/v1", require("./routes"));
+app.use("/api/v1", require("./api/routes"));
 
 // This function will give a 404 response if an undefined API endpoint is fired
 app.use((req, res, next) => {
