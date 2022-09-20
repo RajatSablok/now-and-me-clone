@@ -1,9 +1,10 @@
 const { verifyJWT } = require("../utils");
+const errorStrings = require("../errors");
 
 module.exports = async (req, res, next) => {
   try {
     if (!req.headers.authorization) {
-      const error = new Error("Access Denied! No token entered.");
+      const error = new Error(errorStrings.NO_TOKEN);
       error.status = 401;
       return next(error);
     }
@@ -13,7 +14,7 @@ module.exports = async (req, res, next) => {
     const token = header[1];
 
     if (tokenFormat != "Bearer") {
-      const error = new Error("Access Denied! Invalid access token format.");
+      const error = new Error(errorStrings.INVALID_TOKEN_FORMAT);
       error.status = 401;
       return next(error);
     }
@@ -21,7 +22,7 @@ module.exports = async (req, res, next) => {
     const verified = verifyJWT(token);
 
     if (!verified) {
-      const error = new Error("Access Denied! Invalid token.");
+      const error = new Error(errorStrings.INVALID_TOKEN);
       error.status = 401;
       return next(error);
     }
@@ -29,7 +30,7 @@ module.exports = async (req, res, next) => {
     req.user = verified;
     next();
   } catch (err) {
-    const error = new Error("Access Denied! Invalid token.");
+    const error = new Error(errorStrings.INVALID_TOKEN);
     error.status = 401;
     return next(error);
   }

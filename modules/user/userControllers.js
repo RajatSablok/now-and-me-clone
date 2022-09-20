@@ -1,6 +1,7 @@
 const userRepository = require("./userRepository");
 
 const { getJWT, getHashedPassword, compareHash } = require("../../utils");
+const errorStrings = require("../../errors");
 
 exports.signup = async (userInfo) => {
   try {
@@ -10,8 +11,8 @@ exports.signup = async (userInfo) => {
     );
 
     // Return error if user already exists
-    if (userExists.status) {
-      throw Error("Username taken.");
+    if (userExists.success) {
+      throw Error(errorStrings.USERNAME_TAKEN);
     }
 
     // Hash password
@@ -25,18 +26,18 @@ exports.signup = async (userInfo) => {
 
     // Generate token
     const token = await getJWT({
-      userId: userAdded.data._id,
-      username: userAdded.data.username,
-      name: userAdded.data.name,
+      userId: userAdded._id,
+      username: userAdded.username,
+      name: userAdded.name,
     });
 
     return {
-      _id: userAdded.data._id,
-      username: userAdded.data.username,
+      _id: userAdded._id,
+      username: userAdded.username,
       token,
     };
   } catch (err) {
-    return { status: false, err: err.toString() };
+    throw Error(err);
   }
 };
 
@@ -48,8 +49,8 @@ exports.login = async (userInfo) => {
     );
 
     // Return error if user doesn't exist
-    if (!userExists.status) {
-      throw Error("Auth failed");
+    if (userExists.error) {
+      throw Error(errorStrings.AUTH_FAILED);
     }
 
     // Check if passwords match
@@ -59,7 +60,7 @@ exports.login = async (userInfo) => {
     );
 
     if (!isPasswordCorrect) {
-      throw Error("Auth failed");
+      throw Error(errorStrings.AUTH_FAILED);
     }
 
     // Generate token
@@ -75,6 +76,6 @@ exports.login = async (userInfo) => {
       token,
     };
   } catch (err) {
-    return { status: false, err: err.toString() };
+    throw Error(err);
   }
 };

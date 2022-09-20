@@ -1,4 +1,5 @@
 const replyRepository = require("./replyRepository");
+const errorStrings = require("../../errors");
 
 exports.addReply = async (text, isAnonymous, userId, thoughtId) => {
   try {
@@ -10,15 +11,15 @@ exports.addReply = async (text, isAnonymous, userId, thoughtId) => {
       thoughtId
     );
 
-    if (!replyAdded.status) {
-      throw Error(replyAdded.err.toString());
+    if (!replyAdded.success) {
+      throw Error(replyAdded.err);
     }
 
     return { ...replyAdded };
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -32,8 +33,8 @@ exports.getAllRepliesOnAThought = async (thoughtId, limit, offset) => {
     );
 
     // Handle error
-    if (replies.err) {
-      throw Error(replies.err.toString());
+    if (replies.error) {
+      throw Error(replies.error);
     }
 
     // Remove userId field if the reply was posted anonymously
@@ -46,40 +47,46 @@ exports.getAllRepliesOnAThought = async (thoughtId, limit, offset) => {
     return { replies };
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
 
-exports.deleteReply = async (replyId, requestUserId) => {
+exports.deleteReply = async (replyId, thoughtId, requestUserId) => {
   try {
-    // Find the replied using ID to verify that it was posted by the user
-    const replied = await replyRepository.findReplyById(replyId);
+    // Find the reply using ID to verify that it was posted by the user
+    const reply = await replyRepository.findReplyById(replyId);
 
     // Handle error
-    if (replied.err) {
-      throw Error(thoughtAdded.err.toString());
+    if (reply.error) {
+      throw Error(thoughtAdded.error);
+    }
+
+    // Check if given thoughtId matches
+    // the thoughtId of the reply object
+    if (reply.thoughtId.toString() != thoughtId) {
+      throw Error(errorStrings.SOMETHING_WENT_WRONG);
     }
 
     // Check if the user making the request is the
-    // same as the user who posted the replied
-    if (replied.userId != requestUserId) {
-      throw Error("You are not authorized to perform this action.");
+    // same as the user who posted the reply
+    if (reply.userId != requestUserId) {
+      throw Error(errorStrings.UNAUTHORIZED);
     }
 
     const deleted = await replyRepository.deleteReply(replyId);
 
     // Handle error
-    if (deleted.err) {
-      throw Error(thoughtAdded.err.toString());
+    if (deleted.error) {
+      throw Error(thoughtAdded.error);
     }
 
     return true;
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };

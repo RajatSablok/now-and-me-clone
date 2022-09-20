@@ -14,14 +14,13 @@ exports.addReply = async (text, isAnonymous, userId, thoughtId) => {
     const result = await newReply.save();
 
     return {
-      status: true,
-      err: null,
+      success: true,
       data: result,
     };
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -37,8 +36,8 @@ exports.findAllRepliesByThoughtId = async (thoughtId, limit, offset) => {
     return replies;
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -50,8 +49,8 @@ exports.findReplyById = async (replyId) => {
     return reply;
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -63,8 +62,8 @@ exports.deleteReply = async (replyId) => {
     return deleted;
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };

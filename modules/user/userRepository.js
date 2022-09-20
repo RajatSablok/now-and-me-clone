@@ -1,26 +1,22 @@
 const mongoose = require("mongoose");
 
 const User = require("./userModel");
+const errorStrings = require("../../errors");
 
 exports.findUserByUsername = async (username) => {
   try {
     const user = await User.findOne({ username });
     if (user)
       return {
-        status: true,
-        err: null,
+        success: true,
         data: user,
       };
 
-    return {
-      status: false,
-      err: null,
-      data: null,
-    };
+    throw Error(errorStrings.USER_NOT_FOUND);
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -35,15 +31,11 @@ exports.addUser = async (username, password) => {
 
     await newUser.save();
 
-    return {
-      status: true,
-      err: null,
-      data: newUser,
-    };
+    return newUser;
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };

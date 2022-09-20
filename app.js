@@ -10,6 +10,7 @@ const rateLimit = require("express-rate-limit");
 dotenv.config();
 
 const { connectDB } = require("./utils");
+const errorStrings = require("./errors");
 
 // Initialize express app
 const app = express();
@@ -22,8 +23,7 @@ app.set("trust proxy", 1);
 var limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   max: 60,
-  message:
-    "Too many requests created from this IP, please try again after an hour",
+  message: errorStrings.RATE_LIMITED,
 });
 app.use(limiter);
 
@@ -54,7 +54,7 @@ app.use("/api/v1", require("./routes"));
 
 // This function will give a 404 response if an undefined API endpoint is fired
 app.use((req, res, next) => {
-  const error = new Error("Not found");
+  const error = new Error(errorStrings.ROUTE_NOT_FOUND);
   error.status = 404;
   next(error);
 });
@@ -62,8 +62,8 @@ app.use((req, res, next) => {
 app.use(async (error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
-    message: error.message || error.toString() || "Something went wrong",
-    data: error.data || null,
+    message:
+      error.message || error.toString() || errorStrings.SOMETHING_WENT_WRONG,
   });
 });
 

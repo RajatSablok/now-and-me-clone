@@ -4,13 +4,14 @@ const router = express.Router();
 const thoughtControllers = require("./thoughtControllers");
 const thoughtValidators = require("./thoughtValidators");
 const checkAuth = require("../../middlewares/checkAuth");
+const errorStrings = require("../../errors");
 
 router.post("/", checkAuth, async (req, res, next) => {
   try {
     // Validate request body
     const validated = await thoughtValidators.addThought(req);
     if (validated.error) {
-      const error = new Error("Invalid request format");
+      const error = new Error(errorStrings.INVALID_REQUEST);
       error.status = 400;
       return next(error);
     }
@@ -24,7 +25,7 @@ router.post("/", checkAuth, async (req, res, next) => {
       userId
     );
 
-    if (thoughtData.err) throw Error("Something went wrong");
+    if (thoughtData.error) throw Error(errorStrings.SOMETHING_WENT_WRONG);
 
     return res.status(201).json(thoughtData.data);
   } catch (err) {
@@ -37,7 +38,7 @@ router.get("/", async (req, res, next) => {
     // Validate request body
     const validated = await thoughtValidators.getAllThoughts(req);
     if (validated.error) {
-      const error = new Error("Invalid request format");
+      const error = new Error(errorStrings.INVALID_REQUEST);
       error.status = 400;
       return next(error);
     }
@@ -46,7 +47,7 @@ router.get("/", async (req, res, next) => {
     const { limit, offset } = req.query;
     const thoughts = await thoughtControllers.getAllThoughts(limit, offset);
 
-    if (thoughts.err) throw Error("Something went wrong");
+    if (thoughts.error) throw Error(errorStrings.SOMETHING_WENT_WRONG);
 
     return res.status(200).json(thoughts);
   } catch (err) {
@@ -59,7 +60,7 @@ router.delete("/:thoughtId", checkAuth, async (req, res, next) => {
     // Validate request params
     const validated = await thoughtValidators.deleteThought(req);
     if (validated.error) {
-      const error = new Error("Invalid request format");
+      const error = new Error(errorStrings.INVALID_REQUEST);
       error.status = 400;
       return next(error);
     }
@@ -71,9 +72,9 @@ router.delete("/:thoughtId", checkAuth, async (req, res, next) => {
       req.user.userId
     );
 
-    if (deleted.err) throw Error("Something went wrong");
+    if (deleted.error) throw Error(errorStrings.SOMETHING_WENT_WRONG);
 
-    return res.status(200).json(deleted);
+    return res.status(200).json({ success: true });
   } catch (err) {
     next(err);
   }

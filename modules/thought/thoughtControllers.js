@@ -1,4 +1,5 @@
 const thoughtRepository = require("./thoughtRepository");
+const errorStrings = require("../../errors");
 
 exports.addThought = async (text, isAnonymous, userId) => {
   try {
@@ -9,15 +10,13 @@ exports.addThought = async (text, isAnonymous, userId) => {
       userId
     );
 
-    if (!thoughtAdded.status) {
-      throw Error(thoughtAdded.err.toString());
-    }
+    if (thoughtAdded.success) return { ...thoughtAdded };
 
-    return { ...thoughtAdded };
+    throw Error(thoughtAdded.error);
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -27,9 +26,7 @@ exports.getAllThoughts = async (limit, offset) => {
     let thoughts = await thoughtRepository.getAllThoughts(limit, offset);
 
     // Handle error
-    if (thoughts.err) {
-      throw Error(thoughts.err.toString());
-    }
+    if (thoughts.error) throw Error(thoughts.error);
 
     // Remove userId field if the thought was posted anonymously
     for (let thought of thoughts) {
@@ -41,8 +38,8 @@ exports.getAllThoughts = async (limit, offset) => {
     return { thoughts };
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -53,28 +50,24 @@ exports.deleteThought = async (thoughtId, requestUserId) => {
     const thought = await thoughtRepository.findThoughtById(thoughtId);
 
     // Handle error
-    if (thought.err) {
-      throw Error(thoughtAdded.err.toString());
-    }
+    if (thought.error) throw Error(thoughtAdded.error);
 
     // Check if the user making the request is the
     // same as the user who posted the thought
     if (thought.userId != requestUserId) {
-      throw Error("You are not authorized to perform this action.");
+      throw Error(errorStrings.UNAUTHORIZED);
     }
 
     const deleted = await thoughtRepository.deleteThought(thoughtId);
 
     // Handle error
-    if (deleted.err) {
-      throw Error(thoughtAdded.err.toString());
-    }
+    if (deleted.error) throw Error(thoughtAdded.error);
 
-    return true;
+    return { success: true };
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };

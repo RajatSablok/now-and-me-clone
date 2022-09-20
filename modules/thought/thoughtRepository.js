@@ -13,14 +13,13 @@ exports.addThought = async (text, isAnonymous, userId) => {
     const result = await newThought.save();
 
     return {
-      status: true,
-      err: null,
+      success: true,
       data: result,
     };
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -36,8 +35,8 @@ exports.getAllThoughts = async (limit, offset) => {
     return thoughts;
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -49,8 +48,8 @@ exports.findThoughtById = async (thoughtId) => {
     return thought;
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
@@ -59,11 +58,11 @@ exports.deleteThought = async (thoughtId) => {
   try {
     const deleted = await Thought.deleteOne({ _id: thoughtId });
 
-    return deleted;
+    return { success: deleted };
   } catch (err) {
     return {
-      status: false,
-      err: err.toString(),
+      success: false,
+      error: err.toString(),
     };
   }
 };
