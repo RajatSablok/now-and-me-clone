@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const Reply = require("./replyModel");
+const { DEFAULT_PAGE_LIMIT } = require("../../config");
 
 exports.addReply = async (text, isAnonymous, userId, thoughtId) => {
   try {
@@ -30,7 +31,7 @@ exports.findAllRepliesByThoughtId = async (thoughtId, limit, offset) => {
     const replies = await Reply.find({ thoughtId })
       .select("-__v")
       .skip(offset)
-      .limit(limit)
+      .limit(limit || DEFAULT_PAGE_LIMIT)
       .populate("userId", "username isAnonymous");
 
     return replies;

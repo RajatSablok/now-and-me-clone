@@ -16,7 +16,7 @@ exports.addThought = async (req) => {
 exports.getAllThoughts = async (req) => {
   // Create schema for request validatation
   const schema = Joi.object({
-    limit: Joi.number().min(1).optional(),
+    limit: Joi.number().min(1).max(20).optional(),
     offset: Joi.number().min(0).optional(),
   });
 

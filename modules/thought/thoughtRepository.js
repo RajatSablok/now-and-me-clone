@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const Thought = require("./thoughtModel");
+const { DEFAULT_PAGE_LIMIT } = require("../../config");
 
 exports.addThought = async (text, isAnonymous, userId) => {
   try {
@@ -29,7 +30,7 @@ exports.getAllThoughts = async (limit, offset) => {
     const thoughts = await Thought.find()
       .select("-__v")
       .skip(offset)
-      .limit(limit)
+      .limit(limit || DEFAULT_PAGE_LIMIT)
       .populate("userId", "username isAnonymous");
 
     return thoughts;
