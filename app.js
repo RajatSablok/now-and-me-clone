@@ -1,9 +1,8 @@
+const hpp = require("hpp");
 const cors = require("cors");
 const helmet = require("helmet");
 const dotenv = require("dotenv");
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const rateLimit = require("express-rate-limit");
 
 // Load env variables
@@ -11,6 +10,7 @@ dotenv.config();
 
 const { connectDB } = require("./utils");
 const errorStrings = require("./errors");
+const { PORT } = require("./config");
 
 // Initialize express app
 const app = express();
@@ -18,21 +18,27 @@ const app = express();
 // Connect to MongoDB client using mongoose
 connectDB();
 
-// Set basic rate limiter
 app.set("trust proxy", 1);
+
+// Set basic rate limiter
 var limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 60,
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 20, // Limit each IP to 20 requests per `window` (here, per 1 minute)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   message: errorStrings.RATE_LIMITED,
 });
 app.use(limiter);
 
-// Use helmet to prevent common security vulnerabilities
+// Use helmet to update common security headers
 app.use(helmet());
 
-// Use body-parser to parse json body
-app.use(bodyParser.urlencoded({ limit: "1mb", extended: false }));
-app.use(bodyParser.json("100mb"));
+// Use hpp to prevent HTTP parameter pollution
+app.use(hpp());
+
+// Parse request body and query
+app.use(express.urlencoded({ limit: "10kb", extended: false }));
+app.use(express.json("10kb"));
 
 // Allow CORS
 app.use((req, res, next) => {
@@ -50,6 +56,7 @@ app.use((req, res, next) => {
 
 app.use(cors());
 
+// Initialize routes
 app.use("/api/v1", require("./routes"));
 
 // This function will give a 404 response if an undefined API endpoint is fired
@@ -59,6 +66,7 @@ app.use((req, res, next) => {
   next(error);
 });
 
+// Handle final errors
 app.use(async (error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
@@ -66,8 +74,6 @@ app.use(async (error, req, res, next) => {
       error.message || error.toString() || errorStrings.SOMETHING_WENT_WRONG,
   });
 });
-
-const PORT = process.env.PORT || 5000;
 
 // Start the server
 app.listen(PORT, () => {

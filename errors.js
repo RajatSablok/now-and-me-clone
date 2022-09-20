@@ -10,5 +10,5 @@ module.exports = Object.freeze({
   INVALID_TOKEN_FORMAT: "Access Denied! Invalid access token format.",
   ROUTE_NOT_FOUND: "Route not found",
   RATE_LIMITED:
-    "Too many requests created from this IP, please try again after an hour",
+    "Too many requests created from this IP, please try again later.",
 });
