@@ -56,7 +56,7 @@ router.get("/", async (req, res, next) => {
 
 router.delete("/:thoughtId", checkAuth, async (req, res, next) => {
   try {
-    // Validate request body
+    // Validate request params
     const validated = await thoughtValidators.deleteThought(req);
     if (validated.error) {
       const error = new Error("Invalid request format");
@@ -78,5 +78,8 @@ router.delete("/:thoughtId", checkAuth, async (req, res, next) => {
     next(err);
   }
 });
+
+// Initialize reply routes
+router.use("/:thoughtId/replies", require("../reply/replyRoutes"));
 
 module.exports = router;
