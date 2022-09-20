@@ -68,3 +68,16 @@ exports.deleteReply = async (replyId) => {
     };
   }
 };
+
+exports.deleteRepliesByThoughtId = async (thoughtId) => {
+  try {
+    const deleted = await Reply.deleteMany({ thoughtId });
+
+    return deleted;
+  } catch (err) {
+    return {
+      success: false,
+      error: err.toString(),
+    };
+  }
+};
